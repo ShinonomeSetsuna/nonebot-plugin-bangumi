@@ -167,6 +167,9 @@ pyrightconfig.json
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# token
+tokens.py
+
 # VisualStudioCode
 .vscode/*
 !.vscode/settings.json

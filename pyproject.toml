@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "nonebot-plugin-bangumi"
+version = "0.1.0"
+description = "Nonebot plugin for query with Bangumi API."
+authors = ["ShinonomeSetsuna <114331286+ShinonomeSetsuna@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
