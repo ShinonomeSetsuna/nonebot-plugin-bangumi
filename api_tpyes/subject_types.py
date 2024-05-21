@@ -1,14 +1,6 @@
-from dataclasses import dataclass, is_dataclass, fields
+from dataclasses import dataclass
 from enum import Enum
-from typing import NewType, Optional, get_args
-
-
-class SortType(Enum):
-    """排序方式枚举"""
-
-    rank = "rank"
-    score = "score"
-    id = "id"
+from typing import NewType
 
 
 class SubjectType(Enum):
@@ -71,48 +63,4 @@ class ResponseMessage:
     """偏移量"""
 
 
-AirDateRange = NewType("AirDateRange", str)
-"""上映日期范围, str
-
-(<|>|=)YYYY-MM-DD
-"""
-RatingRange = NewType("RatingRange", str)
-"""评分范围, str
-
-(<|>|=)Rating
-"""
-RankRange = NewType("RankRange", str)
-"""排名范围, str
-
-(<|>|=)Rank
-"""
-
 ErrorMessage = NewType("ErrorMessage", dict[str, str])
-
-
-def from_dict(data_class: type, data: dict):
-    """根据dict生成对应的dataclass实例
-
-    Args:
-        data_class (type): dataclass类
-        data (dict): 数据
-
-    Returns:
-        DataClassInstance: 对应dataclass实例
-    """
-    if not is_dataclass(data_class):
-        raise ValueError(f"{data_class} is not a dataclass")
-
-    fieldtypes = {f.name: f.type for f in fields(data_class)}
-    return data_class(
-        **{
-            f: from_dict(fieldtypes[f], data[f])
-            if is_dataclass(fieldtypes[f])
-            else (
-                [from_dict(args, item) for item in data[f]]
-                if is_dataclass(args := (get_args(fieldtypes[f]) or [None])[0])
-                else data[f]
-            )
-            for f in data
-        }
-    )

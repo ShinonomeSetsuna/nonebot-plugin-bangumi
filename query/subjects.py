@@ -3,7 +3,8 @@ import json
 from typing import Optional, overload
 import requests
 from .tokens import BANGUMI_TOKEN
-from ..api_tpyes.subject_types import (
+from .tools import from_dict
+from ..api_tpyes import (
     ErrorMessage,
     SortType,
     SubjectType,
@@ -11,7 +12,6 @@ from ..api_tpyes.subject_types import (
     RankRange,
     RatingRange,
     ResponseMessage,
-    from_dict,
 )
 
 BASE = "https://api.bgm.tv"
@@ -34,7 +34,7 @@ def strict_mode(
 
 
 @overload
-def subjects_search(
+def subjects_query(
     keyword: str,
     sort: SortType,
     type: Optional[list[SubjectType]] = None,
@@ -44,7 +44,7 @@ def subjects_search(
     rank: Optional[list[RankRange]] = None,
     nsfw: bool = False,
 ) -> ResponseMessage | ErrorMessage:
-    """在Bangumi中使用`keyword`搜索
+    """在Bangumi中使用`keyword`搜索项目
 
     Args:
         keyword (str): 关键字，要搜索的内容
@@ -62,8 +62,8 @@ def subjects_search(
     pass
 
 
-def subjects_search(
-    keyword: str, sort: SortType, **kwargs: dict
+def subjects_query(
+    keyword: str, sort: SortType, **filters: dict
 ) -> ResponseMessage | ErrorMessage:
     data = {
         "keyword": keyword,
@@ -74,7 +74,7 @@ def subjects_search(
                 if isinstance(v, list)
                 else ([v.value] if isinstance(v, Enum) else [v])
             )
-            for k, v in kwargs.items()
+            for k, v in filters.items()
         },
     }
     print(data)
@@ -84,7 +84,7 @@ def subjects_search(
             "Authorization": f"Bearer {BANGUMI_TOKEN}",
             "accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "ShinonomeSetsuna/nonebot-plugin-bangumi (https://github.com/ShinonomeSetsuna/nonebot-plugin-bangumi)",
+            "User-Agent": "ShinonomeSetsuna/nonebot-plugin-bangumi(https://github.com/ShinonomeSetsuna/nonebot-plugin-bangumi)",
         },
         data=json.dumps(data),
     )
@@ -98,16 +98,3 @@ def subjects_search(
         )
     except Exception:
         return r.json()
-
-
-if __name__ == "__main__":
-    print(str(SubjectType.Book.value))
-    print(type(SubjectType.Anime.value))
-    res = subjects_search(
-        "Eden*",
-        SortType.score,
-        type=SubjectType.Game,
-        # rating=["=7.3"],
-        # rank=[""],
-    )
-    print("aaa")
